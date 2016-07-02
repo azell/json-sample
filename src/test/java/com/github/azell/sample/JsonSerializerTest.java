@@ -10,6 +10,9 @@ import java.lang.reflect.Type;
 import java.util.Arrays;
 import java.util.Map;
 
+import org.reflections.Reflections;
+import org.reflections.scanners.ResourcesScanner;
+
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
 
@@ -45,17 +48,22 @@ public final class JsonSerializerTest {
 
   @DataProvider(name = "JsonFileLoader")
   public Object[][] jsonFileLoader() {
-    return Arrays.asList("001.json", "002.json", "003.json")
-                 .stream()
-                 .map(path -> new Object[] { parse(path) })
-                 .toArray(Object[][]::new);
+    String prefix = getClass().getPackage().getName();
+
+    return new Reflections(prefix,
+                           new ResourcesScanner()).getResources(
+                               res -> res.endsWith(".json"))
+                                                  .stream()
+                                                  .map(path -> new Object[] {
+                                                    parse(path) })
+                                                  .toArray(Object[][]::new);
   }
 
   private Map<String, Object> parse(String path) {
     InputStream src = null;
 
     try {
-      src = getClass().getResourceAsStream(path);
+      src = getClass().getClassLoader().getResourceAsStream(path);
 
       return mapper.readValue(src, type);
     } catch (IOException e) {
