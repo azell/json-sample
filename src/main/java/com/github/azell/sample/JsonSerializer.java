@@ -5,7 +5,9 @@ import java.util.Map;
 
 /**
  * Implementation of simple Json serializer
- * 
+ *
+ * NEW Version!! Include fix to the empty array and empty object producing bad json.
+ *
  * @author ys.ahnpark@gmail.com
  *
  */
@@ -24,7 +26,7 @@ public class JsonSerializer {
 	}
 
 	/**
-	 * Called by the public toJson() method 
+	 * Called by the public toJson() method
 	 * @param map
 	 * @param result
 	 */
@@ -38,15 +40,16 @@ public class JsonSerializer {
 
 			result.append(",");
 		}
-		// Removing th last comma
-		result.delete(result.length()-1, result.length());
+		// Removing the last comma
+		if (result.charAt(result.length()-1) == ',')
+			result.delete(result.length()-1, result.length());
 
 		result.append("}");
 	}
 
 	/**
 	 * Emits the object as appropriate json element to the string buffer.
-	 * 
+	 *
 	 * This allows to reuse the branching by type block
 	 * @param obj
 	 * @param result
@@ -64,7 +67,8 @@ public class JsonSerializer {
 				this.emitObject(element, result);
 				result.append(",");
 			}
-			result.delete(result.length()-1, result.length());
+			if (result.charAt(result.length()-1) == ',')
+				result.delete(result.length()-1, result.length());
 			result.append("]");
 
 		} else if (obj instanceof String) {
@@ -75,7 +79,7 @@ public class JsonSerializer {
 			result.append( obj.toString() );
 
 		} else if (obj instanceof Number) {
-			result.append( obj.toString() );			  
+			result.append( obj.toString() );
 		}
 	}
 
