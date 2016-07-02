@@ -45,7 +45,11 @@ public final class JsonSerializerTest {
 
   @DataProvider(name = "JsonFileLoader")
   public Object[][] jsonFileLoader() {
-    return Arrays.asList("001.json", "002.json", "003.json")
+    return Arrays.asList("001.json",
+                         "002.json",
+                         "003.json",
+                         "004.json",
+                         "005.json")
                  .stream()
                  .map(path -> new Object[] { parse(path) })
                  .toArray(Object[][]::new);
